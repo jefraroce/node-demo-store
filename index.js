@@ -1,8 +1,10 @@
 const express = require('express')
 const setRouting = require('./src/router')
+const bodyParser = require('body-parser')
 const { logError, errorHandler } = require('./src/middlewares/error')
 
 const app = express()
+app.use(bodyParser.json())
 const PORT = 3000
 
 setRouting(app)

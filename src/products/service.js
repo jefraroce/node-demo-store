@@ -5,7 +5,6 @@ class ProductsService {
   constructor() {
     this.products = []
     this.generate()
-    console.log('ProductsService constructor...')
   }
 
   generate() {
@@ -25,7 +24,9 @@ class ProductsService {
       ...productData,
       id: faker.string.uuid()
     }
+
     this.products.push(newProduct)
+    return { id: newProduct.id }
   }
 
   findAll() {
@@ -45,10 +46,11 @@ class ProductsService {
     const index = this.products.findIndex(p => p.id === id)
     if (index >= 0) {
       this.products[index] = Object.assign({}, this.products[index], newData)
-      return this.products[index]
-    }
 
-    return null
+      return this.products[index]
+    } else {
+      throw Boom.notFound('Product Not Found')
+    }
   }
 
   delete(id) {

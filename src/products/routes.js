@@ -1,5 +1,7 @@
 const { Router } = require('express')
 const ProductsService = require('./service')
+const { getProductSchema, createProductSchema, updateProductSchema } = require('./schema')
+const validatorHandler = require('../middlewares/validator')
 
 const router = Router()
 const productsService = new ProductsService()
@@ -10,7 +12,7 @@ router.get('/', (req, res) => {
   res.json(products)
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', validatorHandler(getProductSchema, 'params'), (req, res, next) => {
   try {
     const { id } = req.params
     const product = productsService.findById(id)
@@ -20,18 +22,22 @@ router.get('/:id', (req, res, next) => {
   }
 })
 
-router.post('/', (req, res) => {
-  productsService.create(req.body)
-  res.status(201)
+router.post('/', validatorHandler(createProductSchema, 'params'), (req, res, next) => {
+  try {
+    const newProduct = productsService.create(req.body)
+    res.status(201).json(newProduct)
+  } catch (error) {
+    next(error)
+  }
 })
 
-router.put('/:id', (req, res) => {
-  const { id } = req.params
-  const updatedProduct = productsService.update(id, req.body)
-  if (updatedProduct) {
+router.put('/:id', validatorHandler(getProductSchema, 'params'), validatorHandler(updateProductSchema, 'body'), (req, res, next) => {
+  try {
+    const { id } = req.params
+    const updatedProduct = productsService.update(id, req.body)
     res.json(updatedProduct)
-  } else {
-    res.sendStatus(403)
+  } catch (error) {
+    next(error)
   }
 })
 
