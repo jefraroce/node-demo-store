@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker')
+const Boom = require('@hapi/boom')
 
 class ProductsService {
   constructor() {
@@ -32,8 +33,12 @@ class ProductsService {
   }
 
   findById(id) {
-    throw new Error('rayos')
-    return this.products.find(p => p.id === id)
+    const product = this.products.find(p => p.id === id)
+    if (product) {
+      return product
+    }
+
+    throw Boom.notFound('Product Not Found')
   }
 
   update(id, newData) {

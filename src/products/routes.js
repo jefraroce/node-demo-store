@@ -10,13 +10,13 @@ router.get('/', (req, res) => {
   res.json(products)
 })
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params
-  const product = productsService.findById(id)
-  if (product) {
+router.get('/:id', (req, res, next) => {
+  try {
+    const { id } = req.params
+    const product = productsService.findById(id)
     res.json(product)
-  } else {
-    res.status(404).send({ message: 'Not Found' })
+  } catch (error) {
+    next(error)
   }
 })
 
