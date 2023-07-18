@@ -11,10 +11,13 @@ function errorHandler (error, req, res, next) {
     const { statusCode, payload } = error.output
     res.status(statusCode).json(payload)
   } else {
-    res.status(500).json({
-      message: error.message,
-      stack: error.stack
-    })
+    const payload = {
+      message: error.message
+    }
+    if (process.env.NODE_ENV === 'development') {
+      payload['stack'] = error.stack
+    }
+    res.status(500).json(payload)
   }
 }
 
